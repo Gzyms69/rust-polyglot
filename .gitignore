@@ -1,0 +1,41 @@
+# Rust build artifacts
+/target/
+Cargo.lock
+debug
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Test files and debug artifacts
+test_files/*polyglot*
+test_files/*test_audio*
+test_files/*test_image*
+test_files/*.flac
+test_files/*.gif
+test_files/*.png
+test_files/*.zip
+test_files/*.txt
+debug_*
+test_*.rs
+extracted_content.txt
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Project-specific ignores
+# (Add any project-specific files that should be ignored)
