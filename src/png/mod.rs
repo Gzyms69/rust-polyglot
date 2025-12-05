@@ -4,7 +4,7 @@ pub mod parser;
 
 use std::path::Path;
 use std::fs;
-use crate::utils::{write_u32_be, calculate_offset_adjustment};
+use crate::utils::write_u32_be;
 use crate::{PolyglotError, PolyglotResult};
 pub use parser::{Chunk, ParsedPng};
 
@@ -66,6 +66,11 @@ impl PngFile {
         self.parsed = parser::parse_png_chunks(&self.raw_data)?;
 
         Ok(())
+    }
+
+    /// Append WAV data to the first IDAT chunk (parasitic - embeds in image data)
+    pub fn append_wav_to_idat(&mut self, wav_data: &[u8]) -> PolyglotResult<()> {
+        self.append_to_idat(wav_data)
     }
 
     /// Append data to the first IDAT chunk (parasitic - embeds in image data)
@@ -238,7 +243,7 @@ mod tests {
         let mut file = PngFile::from_data(png_data.clone()).unwrap();
 
         // Alternative test with real PNG file
-        let mut file = PngFile::from_file(std::path::Path::new("test_files/test_image.png")).unwrap();
+        let mut file = PngFile::from_file(std::path::Path::new("test_files/input/test_image.png")).unwrap();
 
         println!("Original PNG data length: {}", png_data.len());
         println!("Original chunks: {}", file.parsed.chunks.len());

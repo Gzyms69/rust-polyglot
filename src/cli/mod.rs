@@ -1,6 +1,5 @@
 //! CLI argument parsing and validation interfaces
 
-use crate::{PolyglotError, PolyglotResult};
 
 /// Validation result for polyglot files
 #[derive(Debug, PartialEq)]

@@ -4,7 +4,7 @@ pub mod offsets;
 
 use std::path::Path;
 use std::fs;
-use crate::utils::{read_u32_le, write_u32_le};
+use crate::utils::read_u32_le;
 use crate::{PolyglotError, PolyglotResult};
 
 /// ZIP archive representation with offset tracking
@@ -126,7 +126,7 @@ pub fn create_zip_from_directory(dir_path: &Path) -> PolyglotResult<ZipArchive> 
     let temp_zip = temp_dir.path().join("temp.zip");
 
     let status = Command::new("zip")
-        .args(&["-r", temp_zip.to_str().unwrap(), "."])
+        .args(["-r", temp_zip.to_str().unwrap(), "."])
         .current_dir(dir_path)
         .status()
         .map_err(|e| PolyglotError::CreationFailed(format!("Failed to run zip command: {}", e)))?;

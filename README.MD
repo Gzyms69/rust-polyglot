@@ -2,7 +2,10 @@
 
 A command-line tool for creating polyglot files - files that are valid in multiple formats simultaneously.
 
-Currently supports PNG+ZIP polyglots where PNG images can also function as ZIP archives.
+Currently supports:
+- **PNG+ZIP polyglots**: PNG images that function as ZIP archives
+- **PNG+WAV polyglots**: PNG images containing embedded WAV audio data
+- **Bidirectional polyglots**: True bidirectional PNG+WAV files
 
 ## Quick Start
 
@@ -13,20 +16,38 @@ cargo build --release
 # Create a PNG polyglot containing ZIP data
 ./target/release/rust-polyglot create --png image.png --zip archive.zip --output polyglot.png
 
+# Create a PNG+WAV bidirectional polyglot
+./target/release/rust-polyglot create --png image.png --wav audio.wav --output media.png
+
+# Create truly bidirectional PNG+WAV (works as both formats simultaneously)
+./target/release/rust-polyglot create --png image.png --wav audio.wav --output bidirectional.png --method bidirectional
+
 # Use as PNG image (opens normally in viewers)
 eog polyglot.png
 
 # Use as ZIP archive (rename extension)
 mv polyglot.png polyglot.zip
 unzip polyglot.zip
+
+# Use WAV file from PNG+WAV polyglot
+./target/release/rust-polyglot extract --input media.png --output extracted.wav
 ```
 
 ## How It Works
 
-This tool embeds ZIP archive data within PNG image metadata chunks (text chunks), creating files that:
+This tool creates polyglot files through multiple embedding strategies:
+
+**PNG+ZIP Polyglots**: Embed ZIP archive data within PNG image metadata chunks, creating files that:
 - Display correctly as PNG images
-- Contain functional ZIP archives accessed by renaming `.png` to `.zip`
+- Function as ZIP archives when renamed to `.zip`
 - Maintain file format validity in both contexts
+- **Fully supported**: creation, validation, and extraction
+
+**PNG+WAV Polyglots**: Embed WAV audio data within PNG files, supporting:
+- PNG-dominant embedding (PNG with embedded WAV)
+- WAV-dominant embedding (PNG with embedded WAV)
+- Creation and extraction from PNG+WAV polyglots works
+- **Validation only checks PNG+ZIP format (limitation)**
 
 ## Installation
 
@@ -49,16 +70,22 @@ USAGE:
     rust-polyglot <COMMAND>
 
 COMMANDS:
-    create    Create PNG+ZIP polyglot from PNG image and ZIP archive
-    extract   Extract ZIP contents from polyglot file
+    create    Create polyglot from PNG image and ZIP archive or WAV file
+    extract   Extract embedded ZIP/WAV contents from polyglot file
     validate  Validate polyglot file integrity
     help      Print help information
 ```
 
 ### Create Polyglot
 
+**PNG+ZIP Polyglots:**
 ```bash
 rust-polyglot create --png <image> --zip <archive> --output <result> [--method <embedding>]
+```
+
+**PNG+WAV Polyglots:**
+```bash
+rust-polyglot create --png <image> --wav <audio> --output <result> [--method bidirectional]
 ```
 
 **Methods:**
@@ -70,7 +97,7 @@ rust-polyglot create --png <image> --zip <archive> --output <result> [--method <
 
 ```bash
 rust-polyglot validate --input <file>
-# ✓ File is a valid PNG/ZIP polyglot
+# [OK] File is a valid PNG/ZIP polyglot
 ```
 
 ### Extract Archive
@@ -89,6 +116,7 @@ rust-polyglot extract --input <polyglot> --output <extracted.zip>
 ## Limitations
 
 - Currently only supports PNG as host format
+- PNG+WAV polyglots: creation and extraction work, but validation only supports PNG+ZIP format
 - Experimental formats (GIF, FLAC) present but not fully integrated
 - No encryption or compression support
 - Basic error handling for common cases

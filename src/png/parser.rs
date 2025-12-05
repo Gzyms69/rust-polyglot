@@ -1,6 +1,5 @@
 //! Low-level PNG chunk parsing using manual byte slicing
 
-use std::io::{self, Read};
 use crate::utils::{read_u32_be};
 use crate::PolyglotError;
 

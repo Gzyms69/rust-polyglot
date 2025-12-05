@@ -11,13 +11,14 @@ pub mod cli;
 pub mod png;
 pub mod gif;
 pub mod flac;
+pub mod wav;
 pub mod zip;
 pub mod polyglot;
 pub mod utils;
 pub mod extract;
 
-pub use polyglot::{PolyglotCreator, create_png_flac_polyglot};
-pub use extract::{validate_polyglot, extract_zip_from_png};
+pub use polyglot::{PolyglotCreator, create_png_wav_polyglot, create_png_flac_polyglot};
+pub use extract::{validate_polyglot, extract_zip_from_png, extract_wav_from_png};
 
 /// Result type alias for polyglot operations
 pub type PolyglotResult<T> = Result<T, PolyglotError>;
@@ -31,11 +32,23 @@ pub enum PolyglotError {
     #[error("ZIP parse error: {0}")]
     ZipParse(String),
 
+    #[error("WAV parse error: {0}")]
+    WavParse(String),
+
     #[error("CRC mismatch in chunk {0}")]
     CrcMismatch(String),
 
     #[error("No IDAT chunk found")]
     NoIdatChunk,
+
+    #[error("Invalid RIFF header")]
+    InvalidRiffHeader,
+
+    #[error("Chunk not found: {0}")]
+    ChunkNotFound(String),
+
+    #[error("Size overflow in RIFF file")]
+    SizeOverflow,
 
     #[error("Input file error: {0}")]
     InputFile(#[from] std::io::Error),

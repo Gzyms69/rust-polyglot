@@ -86,11 +86,10 @@ impl FlacFile {
     fn find_or_create_padding_for_png(&self, png_size: usize) -> PolyglotResult<(usize, &MetadataBlock)> {
         // Look for existing PADDING blocks
         for (i, block) in self.structure.metadata_blocks.iter().enumerate() {
-            if let MetadataBlock::Padding { length, .. } = block {
-                if *length >= png_size as u32 {
+            if let MetadataBlock::Padding { length, .. } = block
+                && *length >= png_size as u32 {
                     return Ok((i, block));
                 }
-            }
         }
         
         // No suitable PADDING block found - would need to add one
@@ -102,8 +101,8 @@ impl FlacFile {
     
     /// Replace the content of a PADDING block with PNG data
     fn replace_padding_content(&mut self, block_idx: usize, png_data: &[u8]) -> PolyglotResult<()> {
-        if let Some(block) = self.structure.metadata_blocks.get_mut(block_idx) {
-            if let MetadataBlock::Padding { length, data } = block {
+        if let Some(block) = self.structure.metadata_blocks.get_mut(block_idx)
+            && let MetadataBlock::Padding { length, data } = block {
                 // Replace the padding data with PNG data (up to the block capacity)
                 let copy_len = (*length as usize).min(png_data.len());
                 *data = png_data[0..copy_len].to_vec();
@@ -111,7 +110,6 @@ impl FlacFile {
                 // Pad with zeros if PNG is smaller than block
                 data.resize(*length as usize, 0);
             }
-        }
         
         Ok(())
     }

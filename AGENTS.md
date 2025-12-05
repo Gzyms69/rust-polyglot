@@ -45,7 +45,10 @@ cargo clean
 ## Project Architecture
 
 ### Overview
-Rust implementation of polyglot file creation - files valid in multiple formats simultaneously. Currently focuses on PNG+ZIP polyglots.
+Rust implementation of polyglot file creation - files valid in multiple formats simultaneously. Currently supports:
+- **PNG+ZIP polyglots (full support)**: PNG images that function as ZIP archives - creation, validation, and extraction
+- **PNG+WAV polyglots (partial support)**: PNG images with embedded WAV audio data - creation and extraction work, but validation only supports PNG+ZIP format
+- **True bidirectional PNG+WAV files (experimental)**: Custom format intended to work as both formats simultaneously
 
 ### Core Components
 
@@ -61,6 +64,9 @@ Rust implementation of polyglot file creation - files valid in multiple formats 
 **zip/ - ZIP archive handling**
 - `mod.rs`: ZIP file parsing and manipulation
 - `offsets.rs`: Central directory offset calculations
+
+**wav/ - WAV audio format handling**
+- `mod.rs`: WAV file parsing, RIFF header validation, and data extraction
 
 **polyglot/ - Core logic**
 - `PolyglotCreator`: Orchestrates format combination
@@ -81,27 +87,34 @@ Rust implementation of polyglot file creation - files valid in multiple formats 
 - `PolyglotCreator`: Main orchestration struct
 - `PngFile`: PNG manipulation wrapper
 - `ZipArchive`: ZIP data management
+- `WavFile`: WAV audio file parsing and manipulation
 - `PolyglotError`: Comprehensive error types
 - `ValidationResult`: Polyglot integrity results
 
 ## Embedding Methods
 
 ### Text Embedding (DEFAULT)
-- ZIP data stored in PNG tEXt chunks (metadata)
-- ✅ PNG viewers work normally
-- ✅ ZIP accessible by renaming extension
-- **Working parasitic polyglot**
+- Data stored in PNG tEXt chunks (metadata)
+- PNG viewers work normally
+- ZIP/WAV accessible by renaming extension or extraction
+- **Recommended for PNG+ZIP polyglots**
 
-### Container Method
+### Container Method (ZIP-dominant)
 - PNG file embedded within ZIP archive
-- ✅ ZIP tools work normally
-- ✅ PNG extraction possible
-- **Container approach**
+- ZIP tools work normally
+- PNG extraction possible
+- **Container approach for ZIP-dominant polyglots**
+
+### Bidirectional Method
+- True bidirectional embedding for PNG+WAV
+- File works as both PNG image and WAV audio simultaneously
+- No format dominance - both formats equally valid
+- **Advanced format for seamless dual functionality**
 
 ### IDAT Method (BROKEN)
-- ZIP data in PNG image data chunks
-- ✅ PNG display works
-- ❌ ZIP structure corrupted
+- Data in PNG image data chunks (corrupts IDAT compression)
+- PNG display works
+- Embedded data structure corrupted
 - **Don't use - fundamentally broken**
 
 ## Development Guidelines
@@ -174,6 +187,7 @@ mod tests {
 ## Known Issues & Limitations
 
 - IDAT embedding broken due to compression interference
+- PNG+WAV polyglots: creation and extraction work, but validation only supports PNG+ZIP format
 - No support for compressed ZIP content
 - Limited format validation
 - Basic error messages

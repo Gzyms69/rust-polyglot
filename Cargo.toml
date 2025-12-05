@@ -10,6 +10,8 @@ crc32fast = "1.3"  # Fast CRC calculation
 clap = { version = "4.0", features = ["derive"] }  # CLI
 anyhow = "1.0"  # Error context
 thiserror = "1.0"  # Error types
+hound = "3.5"  # For WAV validation
+byteorder = "1.4"  # For endian conversions in RIFF parsing
 
 tempfile = "3.3"
 

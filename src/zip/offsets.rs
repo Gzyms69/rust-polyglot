@@ -1,6 +1,6 @@
 //! ZIP central directory offset calculation and updating
 
-use crate::utils::{read_u32_le, read_u64_le, write_u32_le, write_u64_le};
+use crate::utils::{read_u32_le, write_u32_le};
 use crate::{PolyglotError, PolyglotResult};
 
 /// ZIP End of Central Directory record
